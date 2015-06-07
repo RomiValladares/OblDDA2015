@@ -9,6 +9,9 @@ public class ManejadorBD {
 
     private static ManejadorBD instancia;
 
+    private ManejadorBD() {
+    }
+
     public static ManejadorBD getInstancia() {
         if (instancia == null) {
             instancia = new ManejadorBD();

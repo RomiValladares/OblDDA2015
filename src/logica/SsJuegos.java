@@ -9,12 +9,16 @@ import logica.JuegoCasino.EventosJuegoCasino;
 //Observable porque la fachada lo observa
 public class SsJuegos extends Observable implements Observer {
 
+    private ServiciosJuego servicios;
+
     private static SsJuegos instancia;
     private ArrayList<JuegoCasino> juegos;
     private double ganancias;
 
     private SsJuegos() {
-        juegos = FabricadorJuegosCasino.getJuegosCasino();
+//        juegos = FabricadorJuegosCasino.getJuegosCasino();
+        servicios = new ServiciosJuegoV1();
+        juegos = servicios.getJuegos();
         for (JuegoCasino juego : juegos) {
             juego.addObserver(this);
         }
@@ -49,6 +53,8 @@ public class SsJuegos extends Observable implements Observer {
         for (JuegoCasino juego : juegos) {
             ganancias += juego.getGanancias();
         }
+
+        servicios.setGanancias(ganancias);
     }
 
     boolean hayJuegoActivos() {

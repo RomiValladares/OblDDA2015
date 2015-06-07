@@ -8,7 +8,9 @@ package persistencia.persistentes;
 import Persistencia.Persistente;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.AbstractMap;
 import java.util.ArrayList;
+import persistencia.Parametro;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 /**
@@ -17,18 +19,17 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
  */
 public class ParametrosPersistente implements Persistencia.Persistente {
 
-    private String nombre, valor;
+    private Parametro param;
 
-    public ParametrosPersistente(String nombre, String valor) {
-        this.nombre = nombre;
-        this.valor = valor;
+    public ParametrosPersistente(Parametro p) {
+        param = p;
     }
 
     @Override
     public ArrayList<String> getInsertSql() {
         ArrayList r = new ArrayList();
         r.add("INSERT INTO Parametros(nombre,valor)"
-                + "VALUES('" + nombre + ",'" + valor + "')");
+                + "VALUES('" + param.getNombre() + ",'" + param.getValor() + "')");
         return r;
     }
 
@@ -39,21 +40,21 @@ public class ParametrosPersistente implements Persistencia.Persistente {
 
     @Override
     public String getUpdateSql() {
-        return "UPDATE Parametros SET nombre='" + nombre
-                + "', valor='" + valor
+        return "UPDATE Parametros SET nombre='" + param.getNombre()
+                + "', valor='" + param.getValor()
                 + "'";
     }
 
     @Override
     public String getDeleteSql() {
-        return "DELETE FROM Parametros " + " WHERE nombre='" + nombre + "'";
+        return "DELETE FROM Parametros " + " WHERE nombre='" + param.getNombre() + "'";
     }
 
     @Override
     public String getSelectSql() {
         String r = "SELECT * from Parametros";
-        if (nombre != null && !nombre.equals("")) {
-            r += " WHERE nombre='" + nombre + "'";
+        if (param != null && param.getNombre() != null && !param.getNombre().equals("")) {
+            r += " WHERE nombre='" + param.getNombre() + "'";
         }
         return r;
     }
@@ -65,18 +66,18 @@ public class ParametrosPersistente implements Persistencia.Persistente {
 
     @Override
     public void leer(ResultSet rs) throws SQLException {
-        nombre = rs.getString("nombre");
-        valor = rs.getString("valor");
+        param.setNombre(rs.getString("nombre"));
+        param.setValor(rs.getString("valor"));
     }
 
     @Override
     public Persistente crearNuevo() {
-        return new ParametrosPersistente(null, null);
+        return new ParametrosPersistente(new Parametro());
     }
 
     @Override
     public Object getObjeto() {
-        throw new NotImplementedException();
+        return param;
     }
 
     @Override

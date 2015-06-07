@@ -26,8 +26,9 @@ public abstract class PartidaJuegoPersistente implements Persistente {
     @Override
     public ArrayList<String> getInsertSql() {
         ArrayList r = new ArrayList();
-        r.add("INSERT INTO Partidas(oid,numero,duracion,total_apostado,codigo_juego)"
-                + "VALUES(" + getOid() + "," + u.getNumeroPartida() + ","
+        r.add("INSERT INTO Partidas(oid,numero,comienzo,final,duracion,total_apostado,codigo_juego)"
+                + "VALUES(" + getOid() + "," + u.getNumeroPartida() + ", '"
+                + u.getComienzo() + "', '" + u.getFinal() + "', "
                 + u.getDuracion() + ", " + u.getTotalApostado() + ", " + getCodigoJuego() + ")");
         return r;
     }
@@ -41,7 +42,9 @@ public abstract class PartidaJuegoPersistente implements Persistente {
     public String getUpdateSql() {
         return "UPDATE Partidas SET numero=" + u.getNumeroPartida()
                 + ", duracion=" + u.getDuracion()
-                + ", total_apostado=" + u.getTotalApostado() + " WHERE oid=" + getOid();
+                + ", '" + u.getComienzo()
+                + "', '" + u.getFinal()
+                + "', total_apostado=" + u.getTotalApostado() + " WHERE oid=" + getOid();
     }
 
     @Override
@@ -73,6 +76,8 @@ public abstract class PartidaJuegoPersistente implements Persistente {
         u.setNumero(rs.getInt("numero"));
         u.setDuracion(rs.getLong("duracion"));
         u.setTotalApostado(rs.getDouble("saldo"));
+        u.setComienzo(rs.getDate("comienzo"));
+        u.setFinal(rs.getDate("final"));
     }
 
     @Override

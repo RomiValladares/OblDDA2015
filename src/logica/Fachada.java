@@ -26,10 +26,10 @@ public class Fachada extends Observable implements Observer {
     }
 
     public void cargarDatosUsuariosPrueba() {
-        ssUsuarios.cargarDatosUsuariosPrueba();
+        ssUsuarios.cargarDatosUsuarios();
     }
 
-    public Jugador ingresar(String nombreUsuario, String contrasena)
+    public Usuario ingresar(String nombreUsuario, String contrasena)
             throws Exception {
         return ssUsuarios.ingresar(nombreUsuario, contrasena);
     }

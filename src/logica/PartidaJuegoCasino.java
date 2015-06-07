@@ -88,4 +88,20 @@ public abstract class PartidaJuegoCasino extends Observable {
         return finalizada;
     }
 
+    public Date getComienzo() {
+        return tiempoInicial;
+    }
+
+    public Date getFinal() {
+        return tiempoFinal;
+    }
+
+    public void setFinal(java.sql.Date date) {
+        tiempoFinal = date;
+    }
+
+    public void setComienzo(java.sql.Date date) {
+        tiempoInicial = date;
+    }
+
 }

@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import logica.Fachada;
 import logica.Jugador;
+import logica.Usuario;
 
 /**
  *
@@ -98,8 +99,8 @@ public class FrameLogin extends javax.swing.JDialog {
         String contrasena = new String(inputContrasena.getPassword());
 
         try {
-            Jugador jugador = Fachada.getInstancia().ingresar(usuario, contrasena);
-            new FrameJuegos(jugador).setVisible(true);
+            Usuario jugador = Fachada.getInstancia().ingresar(usuario, contrasena);
+            new FrameJuegos((Jugador) jugador).setVisible(true);
             setVisible(false); //you can't see me!
             dispose();
         } catch (Exception ex) {
