@@ -13,8 +13,9 @@ import java.util.ArrayList;
  */
 public class FabricaFigurasPoker {
 
-    /*
-     * devuelve todas las figuras de poker disponibles
+    /**
+     *
+     * @return devuelve todas las figuras de poker disponibles
      * en orden descendente
      */
     public static ArrayList<FiguraPoker> getFiguras() {

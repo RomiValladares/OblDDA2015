@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import logica.JuegoCasino.EventosJuegoCasino;
+import logica.poker.PartidaPoker;
 
 //Observer porque observa los juegos para saber cuando se produce una nueva ganancia
 //Observable porque la fachada lo observa
@@ -43,7 +44,10 @@ public class SsJuegos extends Observable implements Observer {
     public void update(Observable o, Object arg) {
         if (arg instanceof EventosJuegoCasino) {
             actualizarGanancias();
-        }
+        }/* else if (arg instanceof PartidaPoker.EventoPartidaPoker) {
+            //finalizo/empezo una partida
+            servicios.guardarPartida(juego);
+        }*/
         setChanged();
         notifyObservers();
     }

@@ -9,8 +9,12 @@ import logica.Jugador;
 import logica.PartidaJuegoCasino;
 import logica.poker.ManoPoker.EventoManoPoker;
 
-//Observable porque lo observa la interfaz para actualizarse cuando por ejemplo entra un jugador a la partida
-//Observer porque observa a la partida
+/**
+ *
+ * @author Romi
+ * Observable porque lo observa la interfaz para actualizarse cuando por ejemplo entra un jugador a la partida
+ * Observer porque observa a la partida
+ */
 public class JuegoPoker extends JuegoCasino implements Observer {
 
     private static final int codigo = 5;
@@ -27,7 +31,7 @@ public class JuegoPoker extends JuegoCasino implements Observer {
     /*
      * @return POKER, partida x, z/y jugadores.
      * 
-     * @see logica.Jugable#getEtiqueta()
+     * @see logica.JuegoCasino#getEtiqueta()
      */
     @Override
     public String getEtiqueta() {

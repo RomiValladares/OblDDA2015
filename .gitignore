@@ -47,3 +47,4 @@ Temporary Items
 *.class
 build/classes/logica/Usuario.class
 dist/lib/AbsoluteLayout.jar
+*.class
