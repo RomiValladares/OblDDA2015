@@ -8,6 +8,10 @@ public class Jugador extends Usuario {
 
     private double saldo;
 
+    public Jugador() {
+
+    }
+
     public double getSaldo() {
         return saldo;
     }

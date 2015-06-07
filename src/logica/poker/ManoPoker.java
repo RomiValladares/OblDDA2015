@@ -41,6 +41,10 @@ public class ManoPoker extends Observable {
 
     private SimpleEntry<Jugador, FiguraPoker> ganadorYFigura;
 
+    //lo consulta la partida al finalizar esta mano.
+    //puede ser diferente del pozoActual, cuando el mismo se inicio acumulado
+    private double montoApostado;
+
     protected ManoPoker(ArrayList<Jugador> jugadores, double apuestaBase) {
         //se hace un new para que cuando se elimine un jugador de la mano, no se elimine de la partida
         this.jugadores = new ArrayList<>(jugadores);
@@ -113,6 +117,7 @@ public class ManoPoker extends Observable {
             //la apuesta le resta el saldo a los jugadores
             apuesta = new Apuesta(jugador, montoApostado);
             pozo += montoApostado;
+            this.montoApostado += montoApostado;
             notificar(new EventoManoPoker(EventosManoPoker.NUEVA_APUESTA));
         }
     }
@@ -120,6 +125,7 @@ public class ManoPoker extends Observable {
     public void aceptarApuesta(Jugador jugador) throws Exception {
         apuesta.agregar(jugador);
         pozo += apuesta.getMontoApostado();
+        this.montoApostado += apuesta.getMontoApostado();
         notificar(new EventoManoPoker(null, jugador + " acepta la apuesta."));
 
         if (apuesta.getJugadores().size() + 1 == jugadores.size()) {
@@ -248,8 +254,12 @@ public class ManoPoker extends Observable {
     private void reasignarCartasAJugador(Jugador j, List<CartaPoker> cartasDescartadas, List<CartaPoker> nuevasCartas) {
         cartasJugadores.get(j).removeAll(cartasDescartadas);
         cartasJugadores.get(j).addAll(nuevasCartas);
-
     }
+
+    protected double getMontoApostado() {
+        return montoApostado;
+    }  
+    
 
     public enum EventosManoPoker {
 

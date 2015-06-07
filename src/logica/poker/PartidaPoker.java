@@ -17,11 +17,15 @@ import logica.PartidaJuegoCasino;
  * Observable porque FramePoker lo observa
  * Observer porque observa a cada ManoPoker
  */
-public class PartidaPoker extends Observable implements PartidaJuegoCasino, Observer {
+public class PartidaPoker extends PartidaJuegoCasino implements Observer {
 
     private Jugador ganador;
-    private boolean finalizada;
     private double ganancias;
+
+    private HashMap<Jugador, Double> jugadores = new HashMap<>();
+    private ManoPoker manoActual;
+    private int cantidadMaxJugadores = 4;
+    private double apuestaBase = 50;
 
     public void retirarse(Jugador jugador) throws Exception {
         if (jugadores.containsKey(jugador)) {
@@ -33,12 +37,12 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
             jugadores.remove(jugador);
 
             //esto es para cuando un jugador elija retirarse sin que haya empezado la partida
-            if (comenzada && jugadores.size() == 1 && !finalizada) {
+            if (isComenzada() && jugadores.size() == 1 && !isFinalizada()) {
                 finalizarPartida();
             } else {
                 notificar(new EventoPartidaPoker(EventosPartidaPoker.SALIDA_JUGADOR, jugador + " sale del juego.", jugador));
             }
-            if (jugadoresQueSiguen == jugadores.size() && comenzada) {
+            if (jugadoresQueSiguen == jugadores.size() && isComenzada()) {
                 jugadoresQueSiguen = 0;
                 comenzar();
             }
@@ -47,9 +51,9 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
         }
     }
 
-    private void finalizarPartida() {
-        comenzada = false;
-        finalizada = true;
+    @Override
+    protected void finalizarPartida() {
+        super.finalizarPartida();
 
         if (jugadores.size() >= 1) {
             //puede pasar que haya terminado la mano, y el ganador salga
@@ -63,11 +67,10 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
         } else {
             notificar(new EventoPartidaPoker(EventosPartidaPoker.FINALIZO_PARTIDA, "Finalizo la partida sin ganador.", null));
         }
-
     }
 
     public Jugador getGanador() throws Exception {
-        if (!finalizada) {
+        if (!isFinalizada()) {
             throw new Exception("La partida no finalizo, todavia no existe un ganador.");
         }
         return ganador;
@@ -94,6 +97,7 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
     public void update(Observable o, Object arg) {
         if (o.getClass().equals(ManoPoker.class)) {
             if (manoActual.isFinalizada()) {
+                setTotalApostado(getTotalApostado() + manoActual.getMontoApostado());
                 if (manoActual.getGanadorYFigura() != null) {
                     //actualiza el saldo del jugador
                     jugadores.put(manoActual.getGanadorYFigura().getKey(), manoActual.getPozo());
@@ -102,7 +106,7 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
             }
             //si despues de chequear el saldo de los jugadores todavia no termino la partida
             //deja que la mano actual notifique
-            if (!finalizada) {
+            if (!isFinalizada()) {
                 notificar(arg);
             }
         }
@@ -118,7 +122,7 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
             return true;
         } else if (jugadores.size() == cantidadMaxJugadores) {
             // TODO hardcoded
-            throw new Exception("La partida " + numeroPartida + " ya tiene "
+            throw new Exception("La partida " + getNumeroPartida() + " ya tiene "
                     + cantidadMaxJugadores + " jugadores.");
         } else {
             return true;
@@ -128,10 +132,6 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
 
     private boolean checkSaldoSuficiente(Jugador j) {
         return j.getSaldo() > apuestaBase;
-    }
-
-    public boolean isFinalizada() {
-        return finalizada;
     }
 
     private void restarGanancias(Jugador jugador) {
@@ -150,21 +150,8 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
         COMENZO_PARTIDA, FINALIZO_PARTIDA, JUGADOR_SALDO_INSUFICIENTE, SALIDA_JUGADOR
     }
 
-    private boolean comenzada = false;
-
-    private HashMap<Jugador, Double> jugadores = new HashMap<>();
-    private ManoPoker manoActual;
-    private int numeroPartida;
-    private int cantidadMaxJugadores = 4;
-    private double apuestaBase = 50;
-
     public PartidaPoker(int numeroPartida) {
-        this.numeroPartida = numeroPartida;
-    }
-
-    @Override
-    public int getNumeroPartida() {
-        return numeroPartida;
+        setNumeroPartida(numeroPartida);
     }
 
     public void agregar(Jugador nuevoJugador) throws Exception {
@@ -179,8 +166,9 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
         }
     }
 
-    private void comenzar() {
-        comenzada = true;
+    @Override
+    protected void comenzar() {
+        super.comenzar();
 
         //se asume que de afuera ya se controlo que todos los jugadores tuvieran saldo disponible
         descontarSaldo();
@@ -212,10 +200,6 @@ public class PartidaPoker extends Observable implements PartidaJuegoCasino, Obse
         manoActual = new ManoPoker(new ArrayList<>(jugadores.keySet()), apuestaBase, pozoAcumulado);
         manoActual.addObserver(this);
         manoActual.comenzar();
-    }
-
-    public boolean isComenzada() {
-        return comenzada;
     }
 
     private void checkJugadoresSaldoInsuficiente() {
