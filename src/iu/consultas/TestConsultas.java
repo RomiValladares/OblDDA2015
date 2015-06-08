@@ -3,24 +3,21 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package main;
-
-import iu.FrameCasino;
-import logica.Fachada;
+package iu.consultas;
 
 /**
  *
  * @author Romi
  */
-public class Main {
+public class TestConsultas {
 
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        FrameCasino frameCasino = new FrameCasino();
-        frameCasino.setVisible(true);
+        FrameConsultas c = new FrameConsultas();
+        c.setVisible(true);
     }
 
 }

@@ -45,9 +45,10 @@ public class SsJuegos extends Observable implements Observer {
         if (arg instanceof EventosJuegoCasino) {
             actualizarGanancias();
         }/* else if (arg instanceof PartidaPoker.EventoPartidaPoker) {
-            //finalizo/empezo una partida
-            servicios.guardarPartida(juego);
-        }*/
+         //finalizo/empezo una partida
+         servicios.guardarPartida(juego);
+         }*/
+
         setChanged();
         notifyObservers();
     }
@@ -68,5 +69,14 @@ public class SsJuegos extends Observable implements Observer {
             }
         }
         return false;
+    }
+
+    /**
+     *
+     * @param codigoJuego juego por el cual se van a filtrar las partidas, o -1
+     * si se quieren obtener todas
+     */
+    ArrayList<PartidaJuegoCasino> getPartidas(JuegoCasino codigoJuego) {
+        return servicios.getPartidas(codigoJuego.getCodigo());
     }
 }

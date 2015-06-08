@@ -11,6 +11,7 @@ public class SsUsuarios {
     private HashMap<String, Usuario> usuariosLogueados = new HashMap<>();
 
     private SsUsuarios() {
+        servicios = new ServiciosUsuarioV1();
         cargarDatosUsuarios();
     }
 

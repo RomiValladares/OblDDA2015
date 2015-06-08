@@ -12,8 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Observable;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import logica.Jugador;
 import logica.poker.figuras.FiguraPoker;
 

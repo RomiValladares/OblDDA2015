@@ -7,14 +7,19 @@ package logica;
 
 import Persistencia.ManejadorBD;
 import java.util.ArrayList;
+import logica.poker.PartidaPoker;
 import persistencia.Parametro;
 import persistencia.persistentes.ParametrosPersistente;
+import persistencia.persistentes.PartidaJuegoPersistente;
 
 /**
  *
  * @author Romi
  */
 public class ServiciosJuegoV1 implements ServiciosJuego {
+
+    //TODO conectarme a la BD y eso
+    ArrayList<PartidaJuegoCasino> partidas = new ArrayList<>();
 
     private ManejadorBD manejador = ManejadorBD.getInstancia();
 
@@ -39,6 +44,18 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
 
         manejador.conectar("");
         manejador.modificar(persistenteGanancias);
+    }
+
+    @Override
+    public void guardarPartida(PartidaJuegoCasino partida) {
+        partidas.add(partida);
+    }
+
+    @Override
+    public ArrayList<PartidaJuegoCasino> getPartidas(int codigoJuego) {
+        partidas.add(new PartidaPoker(2));
+        partidas.add(new PartidaPoker(3));
+        return partidas;
     }
 
 }

@@ -18,4 +18,8 @@ public interface ServiciosJuego {
     public double getGanancias();
 
     public void setGanancias(double ganancias);
+
+    public ArrayList<PartidaJuegoCasino> getPartidas(int codigoJuego);
+
+    public void guardarPartida(PartidaJuegoCasino partida);
 }
