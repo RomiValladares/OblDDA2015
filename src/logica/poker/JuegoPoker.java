@@ -11,9 +11,9 @@ import logica.poker.ManoPoker.EventoManoPoker;
 
 /**
  *
- * @author Romi
- * Observable porque lo observa la interfaz para actualizarse cuando por ejemplo entra un jugador a la partida
- * Observer porque observa a la partida
+ * @author Romi Observable porque lo observa la interfaz para actualizarse
+ * cuando por ejemplo entra un jugador a la partida Observer porque observa a la
+ * partida
  */
 public class JuegoPoker extends JuegoCasino implements Observer {
 
@@ -112,6 +112,11 @@ public class JuegoPoker extends JuegoCasino implements Observer {
             }
         }
         return false;
+    }
+
+    @Override
+    public String getNombre() {
+        return "Poker";
     }
 
 }

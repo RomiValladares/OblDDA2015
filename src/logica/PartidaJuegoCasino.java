@@ -36,6 +36,12 @@ public abstract class PartidaJuegoCasino extends Observable {
      * @return duracion desde que empieza hasta que se obtiene el ganador, en segundos
      */
     public long getDuracion() {
+        if (tiempoInicial == null) {
+            return 0;
+        }
+        if (tiempoFinal == null) {
+            return tiempoInicial.getTime() - new Date().getTime();
+        }
         return tiempoInicial.getTime() - tiempoFinal.getTime();
     }
 

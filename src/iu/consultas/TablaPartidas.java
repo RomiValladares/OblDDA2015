@@ -26,6 +26,7 @@ public class TablaPartidas extends javax.swing.JPanel {
     public TablaPartidas() {
         initComponents();
         tablaPartidas.getSelectionModel().addListSelectionListener(new ListSelectionListener() {
+            @Override
             public void valueChanged(ListSelectionEvent event) {
                 lblParticipantesPartida.setText(tablaPartidas.getValueAt(tablaPartidas.getSelectedRow(), 0).toString());
             }
@@ -101,6 +102,11 @@ public class TablaPartidas extends javax.swing.JPanel {
         jLabel2.setText("Seleccione un juego:");
 
         comboJuegos.setModel(new javax.swing.DefaultComboBoxModel(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        comboJuegos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                comboJuegosActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
@@ -143,6 +149,11 @@ public class TablaPartidas extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void comboJuegosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_comboJuegosActionPerformed
+        // TODO add your handling code here:
+        lblPartidasJuego.setText("Partidas Juego " + comboJuegos.getSelectedItem());
+    }//GEN-LAST:event_comboJuegosActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JComboBox comboJuegos;
@@ -162,14 +173,36 @@ public class TablaPartidas extends javax.swing.JPanel {
 
     void actualizarJuegos(ArrayList<JuegoCasino> juegos) {
         comboJuegos.setModel(new DefaultComboBoxModel(juegos.toArray()));
+        lblPartidasJuego.setText("Partidas Juego " + comboJuegos.getSelectedItem());
     }
 
+    private final String[] columnasTablaPartidas = {"Numero", "Comienzo", "Final", "Duracion (mins)", "Total Apostado"};
+
     void actualizarPartidas(ArrayList<PartidaJuegoCasino> partidas) {
-        Object[] objs = new Object[partidas.size()];
-        int i = 0;
+        Object[][] objs = new Object[partidas.size()][columnasTablaPartidas.length];
+        int fila = 0;
         for (PartidaJuegoCasino partidaJuegoCasino : partidas) {
-            objs[i++] = partidaJuegoCasino;
+            String[] datos = new String[]{"" + partidaJuegoCasino.getNumeroPartida(),
+                "" + partidaJuegoCasino.getComienzo(),
+                "" + partidaJuegoCasino.getFinal(),
+                "" + partidaJuegoCasino.getDuracion(),
+                "" + partidaJuegoCasino.getTotalApostado()};
+            objs[fila++] = armarFila(columnasTablaPartidas.length, datos);
+//            objs[fila][col++] = partidaJuegoCasino.getNumeroPartida();
+//            objs[fila][col++] = partidaJuegoCasino.getComienzo();
+//            objs[fila][col++] = partidaJuegoCasino.getFinal();
+//            objs[fila][col++] = partidaJuegoCasino.getDuracion();
+//            objs[fila][col++] = partidaJuegoCasino.getTotalApostado();
         }
-        tablaPartidas.setModel(new DefaultTableModel(objs, objs.length));
+        tablaPartidas.setModel(new DefaultTableModel(objs, columnasTablaPartidas));
+    }
+
+    private Object[] armarFila(int cols, String[] datos) {
+        Object[] fila = new Object[cols];
+        for (int i = 0; i < cols; i++) {
+            fila[i] = datos[i];
+            i++;
+        }
+        return fila;
     }
 }

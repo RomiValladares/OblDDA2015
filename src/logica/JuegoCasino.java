@@ -10,11 +10,16 @@ public abstract class JuegoCasino extends Observable {
 
         NUEVA_GANANCIA
     }
-    /*
-     * Texto que se muestra en el listado de juegos del casino
-     */
 
+    /**
+     * @return Texto que se muestra en el listado de juegos del casino
+     */
     public abstract String getEtiqueta();
+
+    /**
+     * @return Texto que se muestra en el toString
+     */
+    public abstract String getNombre();
 
     //TODO estos metodos de abajo podrian reutilizarse mas con un coso template
 	/*
@@ -42,4 +47,8 @@ public abstract class JuegoCasino extends Observable {
         this.ganancias = ganancias;
     }
 
+    @Override
+    public String toString() {
+        return getNombre();
+    }
 }
