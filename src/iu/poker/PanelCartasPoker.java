@@ -108,9 +108,6 @@ public class PanelCartasPoker extends javax.swing.JPanel {
 
     private ImageIcon getIconCarta(CartaPoker c) {
         String imgPath = PATH + "/" + c.getEtiqueta() + "." + IMG_TYPE;
-
-        Logger.getLogger(PanelCartasPoker.class.getName()).log(Level.INFO, imgPath);
-
         return new ImageIcon(imgPath);
     }
 

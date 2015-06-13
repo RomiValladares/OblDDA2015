@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
 import logica.JuegoCasino.EventosJuegoCasino;
-import logica.poker.PartidaPoker;
 
 //Observer porque observa los juegos para saber cuando se produce una nueva ganancia
 //Observable porque la fachada lo observa
 public class SsJuegos extends Observable implements Observer {
 
-    private ServiciosJuego servicios;
+    private final ServiciosJuego servicios;
 
     private static SsJuegos instancia;
     private ArrayList<JuegoCasino> juegos;
@@ -44,10 +43,7 @@ public class SsJuegos extends Observable implements Observer {
     public void update(Observable o, Object arg) {
         if (arg instanceof EventosJuegoCasino) {
             actualizarGanancias();
-        }/* else if (arg instanceof PartidaPoker.EventoPartidaPoker) {
-         //finalizo/empezo una partida
-         servicios.guardarPartida(juego);
-         }*/
+        }
 
         setChanged();
         notifyObservers();
@@ -78,5 +74,13 @@ public class SsJuegos extends Observable implements Observer {
      */
     ArrayList<PartidaJuegoCasino> getPartidas(JuegoCasino codigoJuego) {
         return servicios.getPartidas(codigoJuego.getCodigo());
+    }
+
+    protected void guardar(PartidaJuegoCasino p) {
+        servicios.guardar(p);
+    }
+
+    protected void modificar(PartidaJuegoCasino p) {
+        servicios.modificar(p);
     }
 }

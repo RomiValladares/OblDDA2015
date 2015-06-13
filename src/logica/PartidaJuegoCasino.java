@@ -5,6 +5,8 @@
  */
 package logica;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Observable;
 
@@ -12,7 +14,7 @@ import java.util.Observable;
  *
  * @author Romi
  */
-public abstract class PartidaJuegoCasino extends Observable {
+public class PartidaJuegoCasino extends Observable {
 
     private int oid;
     private int numeroPartida;
@@ -32,17 +34,18 @@ public abstract class PartidaJuegoCasino extends Observable {
         this.numeroPartida = numeroPartida;
     }
 
-    /*
-     * @return duracion desde que empieza hasta que se obtiene el ganador, en segundos
+    /**
+     * @return duracion desde que empieza hasta que se obtiene el ganador, en
+     * segundos
      */
     public long getDuracion() {
         if (tiempoInicial == null) {
             return 0;
         }
         if (tiempoFinal == null) {
-            return tiempoInicial.getTime() - new Date().getTime();
+            return new Date().getTime() - tiempoInicial.getTime();
         }
-        return tiempoInicial.getTime() - tiempoFinal.getTime();
+        return tiempoFinal.getTime() - tiempoInicial.getTime();
     }
 
     public double getTotalApostado() {
@@ -77,6 +80,10 @@ public abstract class PartidaJuegoCasino extends Observable {
         finalizada = true;
 
         tiempoFinal = new Date();
+
+        obtenerGanador();
+
+        modificar();
     }
 
     protected void comenzar() {
@@ -84,6 +91,8 @@ public abstract class PartidaJuegoCasino extends Observable {
 
         //comenzar timer
         tiempoInicial = new Date();
+
+        guardar();
     }
 
     public boolean isComenzada() {
@@ -102,12 +111,43 @@ public abstract class PartidaJuegoCasino extends Observable {
         return tiempoFinal;
     }
 
-    public void setFinal(java.sql.Date date) {
+    public void setFinal(Date date) {
         tiempoFinal = date;
     }
 
-    public void setComienzo(java.sql.Date date) {
+    public void setComienzo(Date date) {
         tiempoInicial = date;
+    }
+
+    protected void guardar() {
+        SsJuegos.getInstancia().guardar(this);
+    }
+
+    protected void modificar() {
+        SsJuegos.getInstancia().modificar(this);
+    }
+
+    //METODOS A IMPLEMENTAR EN LAS PARTIDAS
+    protected void obtenerGanador() {
+    }
+
+    public Jugador getGanador() throws Exception {
+        return null;
+    }
+
+    public ArrayList<Jugador> getJugadores() {
+        return null;
+    }
+
+    /**
+     * lectura desde BD
+     *
+     * @param j
+     */
+    public void agregarJugador(Jugador j) {
+    }
+
+    public void setGanador(Jugador j) {
     }
 
 }

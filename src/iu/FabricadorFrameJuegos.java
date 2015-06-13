@@ -12,7 +12,7 @@ public class FabricadorFrameJuegos {
     public static JFrame getVentanaJuego(JuegoCasino juego, Jugador jugador, PartidaJuegoCasino partida) throws Exception {
         try {
             switch (juego.getCodigo()) {
-                case 5:
+                case POKER:
                     return new FramePoker(partida, jugador);
             }
         } catch (Exception ex) {

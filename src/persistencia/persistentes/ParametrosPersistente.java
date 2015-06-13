@@ -39,10 +39,13 @@ public class ParametrosPersistente implements Persistencia.Persistente {
     }
 
     @Override
-    public String getUpdateSql() {
-        return "UPDATE Parametros SET nombre='" + param.getNombre()
-                + "', valor='" + param.getValor()
-                + "'";
+    public ArrayList<String> getUpdateSql() {
+        ArrayList r = new ArrayList();
+        r.add("UPDATE Parametros SET "
+                + " valor='" + param.getValor()
+                + "'"
+                + " WHERE nombre='" + param.getNombre() + "'");
+        return r;
     }
 
     @Override

@@ -19,7 +19,7 @@ public interface Persistente {
 
     public void setOid(int oid);
 
-    public String getUpdateSql();
+    public ArrayList<String> getUpdateSql();
 
     public String getDeleteSql();
 

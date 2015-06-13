@@ -52,9 +52,7 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
     }
 
     @Override
-    protected void finalizarPartida() {
-        super.finalizarPartida();
-
+    protected void obtenerGanador() {
         if (jugadores.size() >= 1) {
             //puede pasar que haya terminado la mano, y el ganador salga
             if (manoActual.getGanadorYFigura() == null || !jugadores.containsKey(manoActual.getGanadorYFigura().getKey())) {
@@ -69,6 +67,7 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
         }
     }
 
+    @Override
     public Jugador getGanador() throws Exception {
         if (!isFinalizada()) {
             throw new Exception("La partida no finalizo, todavia no existe un ganador.");
@@ -109,6 +108,8 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
             if (!isFinalizada()) {
                 notificar(arg);
             }
+
+            modificar();
         }
     }
 
@@ -231,6 +232,17 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
         }
     }
 
+    @Override
+    public void agregarJugador(Jugador j) {
+        jugadores.put(j, 0d);
+    }
+
+    @Override
+    public void setGanador(Jugador j) {
+        ganador = j;
+    }
+
+    @Override
     public ArrayList<Jugador> getJugadores() {
         return new ArrayList<>(jugadores.keySet());
     }

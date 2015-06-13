@@ -3,7 +3,7 @@ package logica.poker;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-
+import logica.FabricadorJuegosCasino.CodigosJuego;
 import logica.JuegoCasino;
 import logica.Jugador;
 import logica.PartidaJuegoCasino;
@@ -17,7 +17,7 @@ import logica.poker.ManoPoker.EventoManoPoker;
  */
 public class JuegoPoker extends JuegoCasino implements Observer {
 
-    private static final int codigo = 5;
+    private static final CodigosJuego codigo = CodigosJuego.POKER;
     private final String etiqueta = "POKER";
     // todas las partidas activas (siendo jugadas) en el momento
     private ArrayList<PartidaPoker> partidas = new ArrayList<>();
@@ -89,7 +89,7 @@ public class JuegoPoker extends JuegoCasino implements Observer {
     }
 
     @Override
-    public int getCodigo() {
+    public CodigosJuego getCodigo() {
         // TODO Auto-generated method stub
         return codigo;
     }

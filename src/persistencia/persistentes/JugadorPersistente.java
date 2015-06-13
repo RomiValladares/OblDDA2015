@@ -38,10 +38,13 @@ public class JugadorPersistente implements Persistente {
     }
 
     @Override
-    public String getUpdateSql() {
-        return "UPDATE Jugadores SET nombre='" + u.getNombre()
+    public ArrayList<String> getUpdateSql() {
+        ArrayList r = new ArrayList();
+        r.add("UPDATE Jugadores SET nombre='" + u.getNombre()
                 + "', pass='" + u.getContrasena()
-                + "', saldo=" + u.getSaldo() + " WHERE oid=" + getOid();
+                + "', saldo=" + u.getSaldo() + " WHERE oid=" + getOid());
+
+        return r;
     }
 
     @Override

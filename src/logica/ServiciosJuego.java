@@ -6,6 +6,7 @@
 package logica;
 
 import java.util.ArrayList;
+import logica.FabricadorJuegosCasino.CodigosJuego;
 
 /**
  *
@@ -19,7 +20,11 @@ public interface ServiciosJuego {
 
     public void setGanancias(double ganancias);
 
-    public ArrayList<PartidaJuegoCasino> getPartidas(int codigoJuego);
+    public ArrayList<PartidaJuegoCasino> getPartidas(CodigosJuego codigoJuego);
 
     public void guardarPartida(PartidaJuegoCasino partida);
+
+    public void guardar(PartidaJuegoCasino p);
+
+    public void modificar(PartidaJuegoCasino p);
 }

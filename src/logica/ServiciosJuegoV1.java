@@ -7,10 +7,12 @@ package logica;
 
 import Persistencia.ManejadorBD;
 import java.util.ArrayList;
+import logica.FabricadorJuegosCasino.CodigosJuego;
 import logica.poker.PartidaPoker;
 import persistencia.Parametro;
 import persistencia.persistentes.ParametrosPersistente;
 import persistencia.persistentes.PartidaJuegoPersistente;
+import persistencia.persistentes.PartidaPokerPersistente;
 
 /**
  *
@@ -18,6 +20,7 @@ import persistencia.persistentes.PartidaJuegoPersistente;
  */
 public class ServiciosJuegoV1 implements ServiciosJuego {
 
+    private final String stringConexion = "jdbc:mysql://localhost/casino?user=root&password=root";
     //TODO conectarme a la BD y eso
     ArrayList<PartidaJuegoCasino> partidas = new ArrayList<>();
 
@@ -32,7 +35,7 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
     public double getGanancias() {
         ParametrosPersistente persistenteGanancias = new ParametrosPersistente(new Parametro("ganancias", ""));
 
-        manejador.conectar("");
+        manejador.conectar(stringConexion);
         manejador.leerPersistente(persistenteGanancias);
 
         return (double) persistenteGanancias.getObjeto();
@@ -42,7 +45,7 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
     public void setGanancias(double ganancias) {
         ParametrosPersistente persistenteGanancias = new ParametrosPersistente(new Parametro("ganancias", ganancias));
 
-        manejador.conectar("");
+        manejador.conectar(stringConexion);
         manejador.modificar(persistenteGanancias);
     }
 
@@ -52,10 +55,54 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
     }
 
     @Override
-    public ArrayList<PartidaJuegoCasino> getPartidas(int codigoJuego) {
-        partidas.add(new PartidaPoker(2));
-        partidas.add(new PartidaPoker(3));
-        return partidas;
+    public ArrayList<PartidaJuegoCasino> getPartidas(CodigosJuego codigoJuego) {
+        PartidaJuegoPersistente persistente;
+        if (codigoJuego == null) {
+            persistente = new PartidaJuegoPersistente(new PartidaJuegoCasino());
+        } else {
+            persistente = getPartidaPersistente(codigoJuego);
+        }
+        manejador.conectar(stringConexion);
+        return manejador.obtenerTodos(persistente);
+    }
+
+    @Override
+    public void guardar(PartidaJuegoCasino p) {
+        PartidaJuegoPersistente persistente = getPartidaPersistente(p);
+
+        manejador.conectar(stringConexion);
+        manejador.agregar(persistente);
+    }
+
+    @Override
+    public void modificar(PartidaJuegoCasino p) {
+        PartidaJuegoPersistente persistente = getPartidaPersistente(p);
+
+        manejador.conectar(stringConexion);
+        manejador.modificar(persistente);
+    }
+
+    /**
+     * Metodo fabrica que devuelve el persistente segun la clase de p
+     *
+     * @param p partida para la que se crea el persistente
+     * @return persistente para p
+     */
+    private PartidaJuegoPersistente getPartidaPersistente(PartidaJuegoCasino p) {
+        if (p == null) {
+            return new PartidaJuegoPersistente(p);
+        }
+        if (p.getClass().equals(PartidaPoker.class)) {
+            return new PartidaPokerPersistente((PartidaPoker) p);
+        }
+        return new PartidaJuegoPersistente(p);
+    }
+
+    private PartidaJuegoPersistente getPartidaPersistente(CodigosJuego codigoJuego) {
+        if (codigoJuego == CodigosJuego.POKER) {
+            return new PartidaPokerPersistente(new PartidaPoker(0));
+        }
+        return new PartidaJuegoPersistente(new PartidaJuegoCasino());
     }
 
 }

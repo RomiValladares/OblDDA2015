@@ -1,6 +1,7 @@
 package logica;
 
 import java.util.Observable;
+import logica.FabricadorJuegosCasino.CodigosJuego;
 
 public abstract class JuegoCasino extends Observable {
 
@@ -32,10 +33,10 @@ public abstract class JuegoCasino extends Observable {
      */
     public abstract boolean puedeJugar(Jugador nuevoJugador) throws Exception;
 
-    /*
+    /**
      * @return Codigo identificador del juego
      */
-    public abstract int getCodigo();
+    public abstract CodigosJuego getCodigo();
 
     public abstract boolean tienePartidasActivas();
 
