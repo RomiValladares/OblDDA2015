@@ -20,11 +20,11 @@ public interface ServiciosJuego {
 
     public void setGanancias(double ganancias);
 
-    public ArrayList<PartidaJuegoCasino> getPartidas(CodigosJuego codigoJuego);
+    public ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(CodigosJuego codigoJuego);
 
     public void guardarPartida(PartidaJuegoCasino partida);
 
-    public void guardar(PartidaJuegoCasino p);
+    public void guardar(DatosPartidaJuegoCasino p);
 
-    public void modificar(PartidaJuegoCasino p);
+    public void modificar(DatosPartidaJuegoCasino p);
 }

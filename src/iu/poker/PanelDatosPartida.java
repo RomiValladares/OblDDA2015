@@ -55,7 +55,7 @@ public class PanelDatosPartida extends javax.swing.JPanel implements Observer {
     }
 
     private void fillListaJugadores() {
-        listJugadores.setListData(partida.getJugadores().toArray());
+        listJugadores.setListData(partida.getJugadoresPartida().toArray());
     }
 
     /**

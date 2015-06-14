@@ -55,10 +55,10 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
     }
 
     @Override
-    public ArrayList<PartidaJuegoCasino> getPartidas(CodigosJuego codigoJuego) {
+    public ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(CodigosJuego codigoJuego) {
         PartidaJuegoPersistente persistente;
         if (codigoJuego == null) {
-            persistente = new PartidaJuegoPersistente(new PartidaJuegoCasino());
+            persistente = new PartidaJuegoPersistente(new DatosPartidaJuegoCasino());
         } else {
             persistente = getPartidaPersistente(codigoJuego);
         }
@@ -67,7 +67,7 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
     }
 
     @Override
-    public void guardar(PartidaJuegoCasino p) {
+    public void guardar(DatosPartidaJuegoCasino p) {
         PartidaJuegoPersistente persistente = getPartidaPersistente(p);
 
         manejador.conectar(stringConexion);
@@ -75,7 +75,7 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
     }
 
     @Override
-    public void modificar(PartidaJuegoCasino p) {
+    public void modificar(DatosPartidaJuegoCasino p) {
         PartidaJuegoPersistente persistente = getPartidaPersistente(p);
 
         manejador.conectar(stringConexion);
@@ -88,21 +88,21 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
      * @param p partida para la que se crea el persistente
      * @return persistente para p
      */
-    private PartidaJuegoPersistente getPartidaPersistente(PartidaJuegoCasino p) {
+    private PartidaJuegoPersistente getPartidaPersistente(DatosPartidaJuegoCasino p) {
         if (p == null) {
             return new PartidaJuegoPersistente(p);
         }
         if (p.getClass().equals(PartidaPoker.class)) {
-            return new PartidaPokerPersistente((PartidaPoker) p);
+            return new PartidaPokerPersistente(p);
         }
         return new PartidaJuegoPersistente(p);
     }
 
     private PartidaJuegoPersistente getPartidaPersistente(CodigosJuego codigoJuego) {
         if (codigoJuego == CodigosJuego.POKER) {
-            return new PartidaPokerPersistente(new PartidaPoker(0));
+            return new PartidaPokerPersistente(new DatosPartidaJuegoCasino(0));
         }
-        return new PartidaJuegoPersistente(new PartidaJuegoCasino());
+        return new PartidaJuegoPersistente(new DatosPartidaJuegoCasino());
     }
 
 }

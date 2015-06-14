@@ -13,8 +13,8 @@ import javax.swing.DefaultComboBoxModel;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
+import logica.DatosPartidaJuegoCasino;
 import logica.JuegoCasino;
-import logica.PartidaJuegoCasino;
 
 /**
  *
@@ -26,7 +26,7 @@ public class TablaPartidas extends javax.swing.JPanel {
      * para acceder a los participantes cuando se haga click en la tabla de
      * arriba
      */
-    private ArrayList<PartidaJuegoCasino> partidas;
+    private ArrayList<DatosPartidaJuegoCasino> partidas;
 
     /**
      * Creates new form TablaPartidas
@@ -44,8 +44,8 @@ public class TablaPartidas extends javax.swing.JPanel {
         });
     }
 
-    private void mostrarListaParticipantes(PartidaJuegoCasino seleccionada) {
-        listaParticipantes.setListData(seleccionada.getJugadores().toArray());
+    private void mostrarListaParticipantes(DatosPartidaJuegoCasino seleccionada) {
+        listaParticipantes.setListData(new ArrayList<>(seleccionada.getJugadores().keySet()).toArray());
         try {
             lblGanador.setText(seleccionada.getGanador().toString());
         } catch (Exception ex) {
@@ -217,12 +217,12 @@ public class TablaPartidas extends javax.swing.JPanel {
 
     private final String[] columnasTablaPartidas = {"Numero", "Comienzo", "Final", "Duracion (mins)", "Total Apostado"};
 
-    void actualizarPartidas(ArrayList<PartidaJuegoCasino> partidas) {
+    void actualizarPartidas(ArrayList<DatosPartidaJuegoCasino> partidas) {
         this.partidas = partidas;
 
         Object[][] objs = new Object[partidas.size()][columnasTablaPartidas.length];
         int fila = 0;
-        for (PartidaJuegoCasino partidaJuegoCasino : partidas) {
+        for (DatosPartidaJuegoCasino partidaJuegoCasino : partidas) {
             String[] datos = new String[]{"" + partidaJuegoCasino.getNumeroPartida(),
                 "" + partidaJuegoCasino.getComienzo(),
                 "" + partidaJuegoCasino.getFinal(),

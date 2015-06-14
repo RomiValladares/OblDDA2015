@@ -5,8 +5,7 @@
  */
 package persistencia.persistentes;
 
-import Persistencia.Persistente;
-import logica.poker.PartidaPoker;
+import logica.DatosPartidaJuegoCasino;
 
 /**
  *
@@ -14,18 +13,13 @@ import logica.poker.PartidaPoker;
  */
 public class PartidaPokerPersistente extends PartidaJuegoPersistente {
 
-    public PartidaPokerPersistente(PartidaPoker u) {
+    public PartidaPokerPersistente(DatosPartidaJuegoCasino u) {
         super(u);
     }
 
     @Override
     protected int getCodigoJuego() {
         return 5;//el codigo del Poker
-    }
-
-    @Override
-    public Persistente crearNuevo() {
-        return new PartidaPokerPersistente(new PartidaPoker(0));
     }
 
 }

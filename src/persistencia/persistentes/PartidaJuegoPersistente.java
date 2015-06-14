@@ -9,13 +9,13 @@ import Persistencia.Persistente;
 import java.util.Date;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import logica.DatosPartidaJuegoCasino;
 import logica.Jugador;
-import logica.PartidaJuegoCasino;
 
 /**
  *
@@ -24,9 +24,9 @@ import logica.PartidaJuegoCasino;
 public class PartidaJuegoPersistente implements Persistente {
 
     private final SimpleDateFormat formato = new SimpleDateFormat("HH:mm:ss dd/MM/yy");
-    private PartidaJuegoCasino u;
+    private DatosPartidaJuegoCasino u;
 
-    public PartidaJuegoPersistente(PartidaJuegoCasino u) {
+    public PartidaJuegoPersistente(DatosPartidaJuegoCasino u) {
         this.u = u;
     }
 
@@ -37,13 +37,15 @@ public class PartidaJuegoPersistente implements Persistente {
                 + " VALUES(" + getOid() + "," + u.getNumeroPartida() + ", '"
                 + formato.format(u.getComienzo()) + "', '"
                 + (u.getFinal() != null ? formato.format(u.getFinal()) : null) + "', "
-                + u.getDuracion() + ", " + u.getTotalApostado() + ", " + getCodigoJuego() + ")");
+                + u.getDuracion() / 60000 + ", " + u.getTotalApostado() + ", " + getCodigoJuego() + ")");
         //guarda los jugadores solo la primera vez
         if (!u.isFinalizada()) {
-            for (Jugador j : u.getJugadores()) {
+            for (Map.Entry<Jugador, Double> entry : u.getJugadores().entrySet()) {
+                Jugador j = entry.getKey();
+                Double ganancias = entry.getValue();
                 try {
-                    r.add("INSERT INTO Participantes(nombre,ganador,numero_partida) "
-                            + "VALUES('" + j.getNombre() + "', " + false + ", " + u.getNumeroPartida() + ")");
+                    r.add("INSERT INTO Participantes(nombre,ganador,numero_partida,ganancias) "
+                            + "VALUES('" + j.getNombre() + "', " + false + ", " + u.getNumeroPartida() + ", " + ganancias + ")");
                 } catch (Exception ex) {
                     Logger.getLogger(PartidaJuegoPersistente.class.getName()).log(Level.SEVERE, null, ex);
                 }
@@ -61,22 +63,20 @@ public class PartidaJuegoPersistente implements Persistente {
     public ArrayList<String> getUpdateSql() {
         ArrayList r = new ArrayList();
         r.add("UPDATE Partidas SET numero=" + u.getNumeroPartida()
-                + ", duracion=" + u.getDuracion()
+                + ", duracion=" + u.getDuracion() / 60000
                 + ", comienzo='" + formato.format(u.getComienzo())
                 + "', final='" + (u.getFinal() != null ? formato.format(u.getFinal()) : null)
                 + "', total_apostado=" + u.getTotalApostado() + " WHERE oid=" + getOid());
-        //se actualiza para setear el ganador
-        if (u.isFinalizada()) {
-            for (Jugador j : u.getJugadores()) {
-                try {
-                    r.add("UPDATE Participantes "
-                            + "SET ganador=" + j.equals(u.getGanador())
-                            + " WHERE nombre='" + j.getNombre() + "' "
-                            + "AND numero_partida=" + u.getNumeroPartida());
-                } catch (Exception ex) {
-                    Logger.getLogger(PartidaJuegoPersistente.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
+        //se actualiza para setear el ganador y las ganancias del jugador
+        for (Map.Entry<Jugador, Double> entry : u.getJugadores().entrySet()) {
+            Jugador j = entry.getKey();
+            Double ganancias = entry.getValue();
+
+            r.add("UPDATE Participantes "
+                    + "SET ganador=" + j.equals(u.getGanador()) + ", "
+                    + "ganancias=" + ganancias
+                    + " WHERE nombre='" + j.getNombre() + "' "
+                    + "AND numero_partida=" + u.getNumeroPartida());
         }
 
         return r;
@@ -119,7 +119,7 @@ public class PartidaJuegoPersistente implements Persistente {
 
             Jugador j = new Jugador();
             j.setNombre(rs.getString("nombre"));
-            u.agregarJugador(j);
+            u.agregarJugador(j, rs.getDouble("ganancias"));
             if (rs.getBoolean("ganador")) {
                 u.setGanador(j);
             }
@@ -144,7 +144,7 @@ public class PartidaJuegoPersistente implements Persistente {
 
     @Override
     public Persistente crearNuevo() {
-        return new PartidaJuegoPersistente(null);
+        return new PartidaJuegoPersistente(new DatosPartidaJuegoCasino(0));
     }
 
 }

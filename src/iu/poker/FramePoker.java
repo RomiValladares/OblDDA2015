@@ -81,7 +81,7 @@ public class FramePoker extends FrameJuegoCasino implements Observer {
                 panelJuegoPoker1.setVisible(false);
                 panelEsperandoInicio.setVisible(true);
                 lblJugadoresRestantes.setText(partida.getCantidadMaxJugadores()
-                        - partida.getJugadores().size() + "");
+                        - partida.getJugadoresPartida().size() + "");
             }
         } catch (Exception ex) {
             Logger.getLogger(FramePoker.class.getName()).log(Level.SEVERE, null, ex);
@@ -287,7 +287,7 @@ public class FramePoker extends FrameJuegoCasino implements Observer {
                     panelAccionesJugador.mostrarPanelApuesta(partida.getManoActual().getApuestaMaxima());
                 } else {
                     lblJugadoresRestantes.setText(partida.getCantidadMaxJugadores()
-                            - partida.getJugadores().size() + "");
+                            - partida.getJugadoresPartida().size() + "");
                 }
             } else if (evento.getJugador().equals(getJugador())) {
                 panelAccionesJugador.mostrarPanelDialog(evento);
@@ -380,7 +380,7 @@ public class FramePoker extends FrameJuegoCasino implements Observer {
 
     private void mostrarDialogoFinPartida(EventoPartidaPoker evento) {
         try {
-            panelAccionesJugador.mostrarDialogFinPartida(partida, partida.getGanador(), getJugador());
+            panelAccionesJugador.mostrarDialogFinPartida(partida, partida.getGanadorPartida(), getJugador());
         } catch (Exception ex) {
             Logger.getLogger(FramePoker.class.getName()).log(Level.SEVERE, null, ex);
             JOptionPane.showMessageDialog(this, ex.getMessage());

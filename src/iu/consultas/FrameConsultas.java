@@ -40,7 +40,7 @@ public class FrameConsultas extends javax.swing.JFrame implements Observer {
     private void mostrar() {
         lblGananciasCasino.setText("$" + Fachada.getInstancia().getGanancias());
         panelTablas.actualizarJuegos(Fachada.getInstancia().getJuegos());
-        panelTablas.actualizarPartidas(Fachada.getInstancia().getPartidas((JuegoCasino) panelTablas.getJuegoSeleccionado()));    }
+        panelTablas.actualizarPartidas(Fachada.getInstancia().getDatosPartidas((JuegoCasino) panelTablas.getJuegoSeleccionado()));    }
 
     /**
      * This method is called from within the constructor to initialize the form.

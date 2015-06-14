@@ -47,11 +47,11 @@ public class Fachada extends Observable implements Observer {
 
     /**
      *
-     * @param codigoJuego juego por el cual se van a filtrar las partidas,
-     * o -1 si se quieren obtener todas
+     * @param codigoJuego juego por el cual se van a filtrar las partidas, o -1
+     * si se quieren obtener todas
      */
-    public ArrayList<PartidaJuegoCasino> getPartidas(JuegoCasino codigoJuego) {
-        return ssJuegos.getPartidas(codigoJuego);
+    public ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(JuegoCasino codigoJuego) {
+        return ssJuegos.getDatosPartidas(codigoJuego);
     }
     // </editor-fold> 
 

@@ -72,15 +72,15 @@ public class SsJuegos extends Observable implements Observer {
      * @param codigoJuego juego por el cual se van a filtrar las partidas, o -1
      * si se quieren obtener todas
      */
-    ArrayList<PartidaJuegoCasino> getPartidas(JuegoCasino codigoJuego) {
-        return servicios.getPartidas(codigoJuego.getCodigo());
+    ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(JuegoCasino codigoJuego) {
+        return servicios.getDatosPartidas(codigoJuego.getCodigo());
     }
 
-    protected void guardar(PartidaJuegoCasino p) {
+    protected void guardar(DatosPartidaJuegoCasino p) {
         servicios.guardar(p);
     }
 
-    protected void modificar(PartidaJuegoCasino p) {
+    protected void modificar(DatosPartidaJuegoCasino p) {
         servicios.modificar(p);
     }
 }

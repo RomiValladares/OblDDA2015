@@ -5,81 +5,24 @@
  */
 package logica;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Observable;
 
 /**
  *
  * @author Romi
  */
-public class PartidaJuegoCasino extends Observable {
+public abstract class PartidaJuegoCasino extends Observable {
 
-    private int oid;
-    private int numeroPartida;
-
-    //para calcular la duracion
-    private Date tiempoInicial, tiempoFinal;
-    private long duracion;
-    private double totalApostado;
-    private boolean comenzada = false;
-    private boolean finalizada;
-
-    public int getNumeroPartida() {
-        return numeroPartida;
-    }
-
-    protected void setNumeroPartida(int numeroPartida) {
-        this.numeroPartida = numeroPartida;
-    }
-
-    /**
-     * @return duracion desde que empieza hasta que se obtiene el ganador, en
-     * segundos
-     */
-    public long getDuracion() {
-        if (tiempoInicial == null) {
-            return 0;
-        }
-        if (tiempoFinal == null) {
-            return new Date().getTime() - tiempoInicial.getTime();
-        }
-        return tiempoFinal.getTime() - tiempoInicial.getTime();
-    }
-
-    public double getTotalApostado() {
-        return totalApostado;
-    }
-
-    public void setTotalApostado(double t) {
-        totalApostado = t;
-    }
-
-    public void setOid(int oid) {
-        this.oid = oid;
-    }
-
-    public int getOid() {
-        return oid;
-    }
-
-    public void setNumero(int aInt) {
-        numeroPartida = aInt;
-    }
-
-    /*
-     * solo para cuando se va a leer desde la bd
-     */
-    public void setDuracion(long aLong) {
-        duracion = aLong;
-    }
+    private DatosPartidaJuegoCasino datos = new DatosPartidaJuegoCasino();
 
     protected void finalizarPartida() {
-        comenzada = false;
-        finalizada = true;
+        setComenzada(false);
+        setFinalizada(true);
 
-        tiempoFinal = new Date();
+        setTiempoFinal(new Date());
 
         obtenerGanador();
 
@@ -87,67 +30,138 @@ public class PartidaJuegoCasino extends Observable {
     }
 
     protected void comenzar() {
-        comenzada = true;
+        setComenzada(true);
 
         //comenzar timer
-        tiempoInicial = new Date();
+        setTiempoInicial(new Date());
 
         guardar();
     }
 
-    public boolean isComenzada() {
-        return comenzada;
-    }
-
-    public boolean isFinalizada() {
-        return finalizada;
-    }
-
-    public Date getComienzo() {
-        return tiempoInicial;
-    }
-
-    public Date getFinal() {
-        return tiempoFinal;
-    }
-
-    public void setFinal(Date date) {
-        tiempoFinal = date;
-    }
-
-    public void setComienzo(Date date) {
-        tiempoInicial = date;
-    }
-
     protected void guardar() {
-        SsJuegos.getInstancia().guardar(this);
+        SsJuegos.getInstancia().guardar(datos);
     }
 
     protected void modificar() {
-        SsJuegos.getInstancia().modificar(this);
+        SsJuegos.getInstancia().modificar(datos);
     }
 
-    //METODOS A IMPLEMENTAR EN LAS PARTIDAS
-    protected void obtenerGanador() {
+    //METODOS DELEGADOS
+    public int getNumeroPartida() {
+        return datos.getNumeroPartida();
     }
 
-    public Jugador getGanador() throws Exception {
-        return null;
+    protected void setNumeroPartida(int numeroPartida) {
+        datos.setNumeroPartida(numeroPartida);
     }
 
-    public ArrayList<Jugador> getJugadores() {
-        return null;
+    protected long getDuracion() {
+        return datos.getDuracion();
     }
 
-    /**
-     * lectura desde BD
-     *
-     * @param j
-     */
-    public void agregarJugador(Jugador j) {
+    protected double getTotalApostado() {
+        return datos.getTotalApostado();
     }
 
-    public void setGanador(Jugador j) {
+    protected void setTotalApostado(double t) {
+        datos.setTotalApostado(t);
+    }
+
+    protected void setOid(int oid) {
+        datos.setOid(oid);
+    }
+
+    protected int getOid() {
+        return datos.getOid();
+    }
+
+    protected void setNumero(int aInt) {
+        datos.setNumero(aInt);
+    }
+
+    protected void setDuracion(long aLong) {
+        datos.setDuracion(aLong);
+    }
+
+    public double getGanancias() {
+        return datos.getGanancias();
+    }
+
+    protected void setGanancias(double ganancias) {
+        datos.setGanancias(ganancias);
+    }
+
+    protected Date getTiempoInicial() {
+        return datos.getTiempoInicial();
+    }
+
+    protected void setTiempoInicial(Date tiempoInicial) {
+        datos.setTiempoInicial(tiempoInicial);
+    }
+
+    protected Date getTiempoFinal() {
+        return datos.getTiempoFinal();
+    }
+
+    protected void setTiempoFinal(Date tiempoFinal) {
+        datos.setTiempoFinal(tiempoFinal);
+    }
+
+    public boolean isComenzada() {
+        return datos.isComenzada();
+    }
+
+    protected void setComenzada(boolean comenzada) {
+        datos.setComenzada(comenzada);
+    }
+
+    protected void setFinalizada(boolean finalizada) {
+        datos.setFinalizada(finalizada);
+    }
+
+    public boolean isFinalizada() {
+        return datos.isFinalizada();
+    }
+
+    protected Date getComienzo() {
+        return datos.getComienzo();
+    }
+
+    protected Date getFinal() {
+        return datos.getFinal();
+    }
+
+    protected void setFinal(Date date) {
+        datos.setFinal(date);
+    }
+
+    protected void setComienzo(Date date) {
+        datos.setComienzo(date);
+    }
+
+    protected abstract void obtenerGanador();
+
+    protected void setGanador(Jugador j) {
+        datos.setGanador(j);
+    }
+
+    protected Jugador getGanador() {
+        return datos.getGanador();
+    }
+
+    public Jugador getGanadorPartida() throws Exception {
+        if (!isFinalizada()) {
+            throw new Exception("La partida no finalizo, todavia no existe un ganador.");
+        }
+        return datos.getGanador();
+    }
+
+    protected HashMap<Jugador, Double> getJugadores() {
+        return datos.getJugadores();
+    }
+
+    public ArrayList<Jugador> getJugadoresPartida() {
+        return new ArrayList<>(datos.getJugadores().keySet());
     }
 
 }

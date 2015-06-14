@@ -36,7 +36,7 @@ public class JuegoPoker extends JuegoCasino implements Observer {
     @Override
     public String getEtiqueta() {
         return etiqueta + ", partida: " + proximaPartida.getNumeroPartida()
-                + ", " + proximaPartida.getJugadores().size() + "/"
+                + ", " + proximaPartida.getJugadoresPartida().size() + "/"
                 + proximaPartida.getCantidadMaxJugadores() + " jugadores";
     }
 

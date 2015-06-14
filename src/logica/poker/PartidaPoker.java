@@ -19,30 +19,26 @@ import logica.PartidaJuegoCasino;
  */
 public class PartidaPoker extends PartidaJuegoCasino implements Observer {
 
-    private Jugador ganador;
-    private double ganancias;
-
-    private HashMap<Jugador, Double> jugadores = new HashMap<>();
     private ManoPoker manoActual;
     private int cantidadMaxJugadores = 4;
     private double apuestaBase = 50;
 
     public void retirarse(Jugador jugador) throws Exception {
-        if (jugadores.containsKey(jugador)) {
+        if (getJugadores().containsKey(jugador)) {
             if (manoActual != null && !manoActual.isFinalizada()) {
                 manoActual.retirarse(jugador);
             }
             //resta el 10% de lo ganado
             restarGanancias(jugador);
-            jugadores.remove(jugador);
+            getJugadores().remove(jugador);
 
             //esto es para cuando un jugador elija retirarse sin que haya empezado la partida
-            if (isComenzada() && jugadores.size() == 1 && !isFinalizada()) {
+            if (isComenzada() && getJugadores().size() == 1 && !isFinalizada()) {
                 finalizarPartida();
             } else {
                 notificar(new EventoPartidaPoker(EventosPartidaPoker.SALIDA_JUGADOR, jugador + " sale del juego.", jugador));
             }
-            if (jugadoresQueSiguen == jugadores.size() && isComenzada()) {
+            if (jugadoresQueSiguen == getJugadores().size() && isComenzada()) {
                 jugadoresQueSiguen = 0;
                 comenzar();
             }
@@ -53,26 +49,18 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
 
     @Override
     protected void obtenerGanador() {
-        if (jugadores.size() >= 1) {
+        if (getJugadores().size() >= 1) {
             //puede pasar que haya terminado la mano, y el ganador salga
-            if (manoActual.getGanadorYFigura() == null || !jugadores.containsKey(manoActual.getGanadorYFigura().getKey())) {
-                ganador = (Jugador) jugadores.keySet().toArray()[0];
+            if (manoActual.getGanadorYFigura() == null || !getJugadores().containsKey(manoActual.getGanadorYFigura().getKey())) {
+                setGanador((Jugador) getJugadores().keySet().toArray()[0]);
             } else {
-                ganador = manoActual.getGanadorYFigura().getKey();
+                setGanador(manoActual.getGanadorYFigura().getKey());
             }
-            ganador.agregarSaldo(manoActual.getPozo());
-            notificar(new EventoPartidaPoker(EventosPartidaPoker.FINALIZO_PARTIDA, "Finalizo la partida. Ganador: " + ganador, ganador));
+            getGanador().agregarSaldo(manoActual.getPozo());
+            notificar(new EventoPartidaPoker(EventosPartidaPoker.FINALIZO_PARTIDA, "Finalizo la partida. Ganador: " + getGanador(), getGanador()));
         } else {
             notificar(new EventoPartidaPoker(EventosPartidaPoker.FINALIZO_PARTIDA, "Finalizo la partida sin ganador.", null));
         }
-    }
-
-    @Override
-    public Jugador getGanador() throws Exception {
-        if (!isFinalizada()) {
-            throw new Exception("La partida no finalizo, todavia no existe un ganador.");
-        }
-        return ganador;
     }
 
     private int jugadoresQueSiguen = 0;
@@ -84,8 +72,8 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
         } else {
             Logger.getLogger(PartidaPoker.class.getName()).log(Level.INFO, null, "continuarEnJuego " + jugador);
             jugadoresQueSiguen++;
-            Logger.getLogger("jugadoresQueSiguen " + jugadoresQueSiguen + " jugadores.size()=" + jugadores.size());
-            if (jugadoresQueSiguen == jugadores.size()) {
+            Logger.getLogger("jugadoresQueSiguen " + jugadoresQueSiguen + " jugadores.size()=" + getJugadores().size());
+            if (jugadoresQueSiguen == getJugadores().size()) {
                 jugadoresQueSiguen = 0;
                 comenzar();
             }
@@ -99,7 +87,7 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
                 setTotalApostado(getTotalApostado() + manoActual.getMontoApostado());
                 if (manoActual.getGanadorYFigura() != null) {
                     //actualiza el saldo del jugador
-                    jugadores.put(manoActual.getGanadorYFigura().getKey(), manoActual.getPozo());
+                    getJugadores().put(manoActual.getGanadorYFigura().getKey(), manoActual.getPozo());
                 }
                 checkJugadoresSaldoInsuficiente();
             }
@@ -119,9 +107,9 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
             throw new Exception("El saldo del jugador "
                     + nuevoJugador.getNombre()
                     + " es menor a la apuesta base (" + apuestaBase + ")");
-        } else if (jugadores.containsKey(nuevoJugador)) {
+        } else if (getJugadores().containsKey(nuevoJugador)) {
             return true;
-        } else if (jugadores.size() == cantidadMaxJugadores) {
+        } else if (getJugadores().size() == cantidadMaxJugadores) {
             // TODO hardcoded
             throw new Exception("La partida " + getNumeroPartida() + " ya tiene "
                     + cantidadMaxJugadores + " jugadores.");
@@ -136,14 +124,10 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
     }
 
     private void restarGanancias(Jugador jugador) {
-        double diezPorcientoGanancias = (10 * jugadores.get(jugador)) / 100;
+        double diezPorcientoGanancias = (10 * getJugadores().get(jugador)) / 100;
         jugador.restarSaldo(diezPorcientoGanancias);
-        ganancias += diezPorcientoGanancias;
+        setGanancias(getGanancias() + diezPorcientoGanancias);
         notificar(EventosJuegoCasino.NUEVA_GANANCIA);
-    }
-
-    protected double getGanancias() {
-        return ganancias;
     }
 
     public enum EventosPartidaPoker {
@@ -157,9 +141,9 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
 
     public void agregar(Jugador nuevoJugador) throws Exception {
         if (puedeJugar(nuevoJugador)) {
-            jugadores.put(nuevoJugador, 0d);
+            getJugadores().put(nuevoJugador, 0d);
 
-            if (jugadores.size() == cantidadMaxJugadores) {
+            if (getJugadores().size() == cantidadMaxJugadores) {
                 comenzar();
             } else {
                 notificar();
@@ -192,20 +176,20 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
     }
 
     private void descontarSaldo() {
-        for (Map.Entry<Jugador, Double> entrySet : jugadores.entrySet()) {
+        for (Map.Entry<Jugador, Double> entrySet : getJugadores().entrySet()) {
             entrySet.getKey().restarSaldo(apuestaBase);
         }
     }
 
     private void nuevaMano(double pozoAcumulado) {
-        manoActual = new ManoPoker(new ArrayList<>(jugadores.keySet()), apuestaBase, pozoAcumulado);
+        manoActual = new ManoPoker(new ArrayList<>(getJugadores().keySet()), apuestaBase, pozoAcumulado);
         manoActual.addObserver(this);
         manoActual.comenzar();
     }
 
     private void checkJugadoresSaldoInsuficiente() {
         ArrayList<Jugador> jugadoresSaldoInsuficiente = new ArrayList<>();
-        for (Iterator<Map.Entry<Jugador, Double>> iterator = jugadores.entrySet().iterator(); iterator.hasNext();) {
+        for (Iterator<Map.Entry<Jugador, Double>> iterator = getJugadores().entrySet().iterator(); iterator.hasNext();) {
             Jugador j = iterator.next().getKey();
             if (!checkSaldoSuficiente(j)) {
                 jugadoresSaldoInsuficiente.add(j);
@@ -214,15 +198,15 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
             }
         }
 
-        if (jugadoresSaldoInsuficiente.size() == jugadores.size()) {
+        if (jugadoresSaldoInsuficiente.size() == getJugadores().size()) {
             //perdieron todos?
             finalizarPartida();
-        } else if (jugadoresSaldoInsuficiente.size() == jugadores.size() - 1) {
+        } else if (jugadoresSaldoInsuficiente.size() == getJugadores().size() - 1) {
             //solo uno tiene saldo suficiente asi que gana
             finalizarPartida();
         } else {
             //quedan al menos dos personas en el juego, no gano nadie todavia
-            for (Iterator<Map.Entry<Jugador, Double>> iterator = jugadores.entrySet().iterator(); iterator.hasNext();) {
+            for (Iterator<Map.Entry<Jugador, Double>> iterator = getJugadores().entrySet().iterator(); iterator.hasNext();) {
                 Jugador j = iterator.next().getKey();
                 if (jugadoresSaldoInsuficiente.contains(j)) {
                     iterator.remove();
@@ -230,21 +214,6 @@ public class PartidaPoker extends PartidaJuegoCasino implements Observer {
                 }
             }
         }
-    }
-
-    @Override
-    public void agregarJugador(Jugador j) {
-        jugadores.put(j, 0d);
-    }
-
-    @Override
-    public void setGanador(Jugador j) {
-        ganador = j;
-    }
-
-    @Override
-    public ArrayList<Jugador> getJugadores() {
-        return new ArrayList<>(jugadores.keySet());
     }
 
     public int getCantidadMaxJugadores() {
