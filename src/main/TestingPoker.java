@@ -13,8 +13,8 @@ import java.util.AbstractMap.SimpleEntry;
 
 import junit.framework.TestCase;
 import logica.poker.CartaPoker;
-import logica.Fachada;
-import logica.JuegoCasino;
+import logica.FachadaV1;
+import logica.JuegoCasinoV1;
 import logica.Jugador;
 import logica.poker.CartaPoker.ComparadorPorNumeroCartaDesc;
 import logica.poker.MazoPoker;

@@ -13,12 +13,12 @@ package persistencia;
 public class Parametro {
 
     private Object nombre;
-    private Object valor;
+    private double valor;
 
     public Parametro() {
     }
 
-    public Parametro(Object nombre, Object valor) {
+    public Parametro(Object nombre, double valor) {
         this.nombre = nombre;
         this.valor = valor;
     }
@@ -31,11 +31,11 @@ public class Parametro {
         this.nombre = nombre;
     }
 
-    public Object getValor() {
+    public double getValor() {
         return valor;
     }
 
-    public void setValor(Object valor) {
+    public void setValor(double valor) {
         this.valor = valor;
     }
 

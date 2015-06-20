@@ -5,8 +5,7 @@
  */
 package main;
 
-import iu.FrameCasino;
-import logica.Fachada;
+import logica.FachadaV1;
 
 /**
  *
@@ -19,8 +18,10 @@ public class Main {
      */
     public static void main(String[] args) {
         // TODO code application logic here
-        FrameCasino frameCasino = new FrameCasino();
-        frameCasino.setVisible(true);
+//        FrameCasino frameCasino = new FrameCasino();
+//        frameCasino.setVisible(true);
+
+        Publicador.publicar("casino", FachadaV1.getInstancia());
     }
 
 }

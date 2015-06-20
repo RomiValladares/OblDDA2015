@@ -1,55 +1,46 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package logica;
 
+import java.rmi.Remote;
+import java.rmi.RemoteException;
 import java.util.Observable;
-import logica.FabricadorJuegosCasino.CodigosJuego;
 
-public abstract class JuegoCasino extends Observable {
-
-    double ganancias;
-
-    public enum EventosJuegoCasino {
-
-        NUEVA_GANANCIA
-    }
-
-    /**
-     * @return Texto que se muestra en el listado de juegos del casino
-     */
-    public abstract String getEtiqueta();
-
-    /**
-     * @return Texto que se muestra en el toString
-     */
-    public abstract String getNombre();
-
-    //TODO estos metodos de abajo podrian reutilizarse mas con un coso template
-	/*
-     * Agrega un jugador a la partida que corresponda
-     */
-    public abstract PartidaJuegoCasino jugar(Jugador nuevoJugador) throws Exception;
-
-    /*
-     * validacion previa para ingresar al juego
-     */
-    public abstract boolean puedeJugar(Jugador nuevoJugador) throws Exception;
+/**
+ *
+ * @author Romi
+ */
+public interface JuegoCasino extends Remote {
 
     /**
      * @return Codigo identificador del juego
      */
-    public abstract CodigosJuego getCodigo();
+    FabricadorJuegosCasino.CodigosJuego getCodigo() throws RemoteException;
 
-    public abstract boolean tienePartidasActivas();
+    /**
+     * @return Texto que se muestra en el listado de juegos del casino
+     */
+    String getEtiqueta() throws RemoteException;
 
-    protected double getGanancias() {
-        return ganancias;
-    }
+    /**
+     * @return Texto que se muestra en el toString
+     */
+    String getNombre() throws RemoteException;
 
-    public void setGanancias(double ganancias) {
-        this.ganancias = ganancias;
-    }
+    //TODO estos metodos de abajo podrian reutilizarse mas con un coso template
+    /*
+     * Agrega un jugador a la partida que corresponda
+     */
+    PartidaJuegoCasinoV1 jugar(Jugador nuevoJugador) throws RemoteException, Exception;
 
-    @Override
-    public String toString() {
-        return getNombre();
-    }
+    /*
+     * validacion previa para ingresar al juego
+     */
+    boolean puedeJugar(Jugador nuevoJugador) throws RemoteException, Exception;
+
+    boolean tienePartidasActivas() throws RemoteException;
+
 }

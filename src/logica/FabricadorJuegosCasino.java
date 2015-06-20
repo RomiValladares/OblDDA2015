@@ -1,7 +1,10 @@
 package logica;
 
+import java.rmi.RemoteException;
 import logica.poker.JuegoPoker;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class FabricadorJuegosCasino {
 
@@ -19,9 +22,13 @@ public class FabricadorJuegosCasino {
         }
     }
 
-    public static ArrayList<JuegoCasino> getJuegosCasino() {
-        ArrayList<JuegoCasino> juegos = new ArrayList<>();
-        juegos.add(new JuegoPoker());
+    public static ArrayList<JuegoCasinoV1> getJuegosCasino() {
+        ArrayList<JuegoCasinoV1> juegos = new ArrayList<>();
+        try {
+            juegos.add(new JuegoPoker());
+        } catch (RemoteException ex) {
+            Logger.getLogger(FabricadorJuegosCasino.class.getName()).log(Level.SEVERE, null, ex);
+        }
         return juegos;
     }
 }

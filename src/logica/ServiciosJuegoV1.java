@@ -8,11 +8,10 @@ package logica;
 import Persistencia.ManejadorBD;
 import java.util.ArrayList;
 import logica.FabricadorJuegosCasino.CodigosJuego;
-import logica.poker.PartidaPoker;
+import logica.poker.PartidaPokerV1;
 import persistencia.Parametro;
 import persistencia.persistentes.ParametrosPersistente;
 import persistencia.persistentes.PartidaJuegoPersistente;
-import persistencia.persistentes.PartidaPokerPersistente;
 
 /**
  *
@@ -22,18 +21,31 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
 
     private final String stringConexion = "jdbc:mysql://localhost/casino?user=root&password=root";
     //TODO conectarme a la BD y eso
-    ArrayList<PartidaJuegoCasino> partidas = new ArrayList<>();
+    ArrayList<PartidaJuegoCasinoV1> partidas = new ArrayList<>();
 
     private ManejadorBD manejador = ManejadorBD.getInstancia();
 
     @Override
-    public ArrayList<JuegoCasino> getJuegos() {
-        return FabricadorJuegosCasino.getJuegosCasino();
+    public ArrayList<JuegoCasinoV1> getJuegos() {
+        ArrayList<JuegoCasinoV1> juegosCasino = FabricadorJuegosCasino.getJuegosCasino();
+
+        ParametrosPersistente persistente = new ParametrosPersistente(new Parametro("ultima_partida", 0));
+
+        manejador.conectar(stringConexion);
+        manejador.leerPersistente(persistente);
+        double ultimoNumeroPartida = ((Parametro) persistente.getObjeto()).getValor();
+
+        //consulta a la bd para obtener el ultimo numero de partida
+        for (JuegoCasinoV1 juegoCasino : juegosCasino) {
+            juegoCasino.setUltimoNumeroPartida((int) ultimoNumeroPartida);
+        }
+
+        return juegosCasino;
     }
 
     @Override
     public double getGanancias() {
-        ParametrosPersistente persistenteGanancias = new ParametrosPersistente(new Parametro("ganancias", ""));
+        ParametrosPersistente persistenteGanancias = new ParametrosPersistente(new Parametro("ganancias", 0));
 
         manejador.conectar(stringConexion);
         manejador.leerPersistente(persistenteGanancias);
@@ -50,59 +62,34 @@ public class ServiciosJuegoV1 implements ServiciosJuego {
     }
 
     @Override
-    public void guardarPartida(PartidaJuegoCasino partida) {
-        partidas.add(partida);
-    }
-
-    @Override
     public ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(CodigosJuego codigoJuego) {
         PartidaJuegoPersistente persistente;
-        if (codigoJuego == null) {
-            persistente = new PartidaJuegoPersistente(new DatosPartidaJuegoCasino());
-        } else {
-            persistente = getPartidaPersistente(codigoJuego);
-        }
+
+        persistente = new PartidaJuegoPersistente(new DatosPartidaJuegoCasino(-1, codigoJuego));
+
         manejador.conectar(stringConexion);
         return manejador.obtenerTodos(persistente);
     }
 
     @Override
     public void guardar(DatosPartidaJuegoCasino p) {
-        PartidaJuegoPersistente persistente = getPartidaPersistente(p);
+        PartidaJuegoPersistente persistentePartida = new PartidaJuegoPersistente(p);
 
         manejador.conectar(stringConexion);
-        manejador.agregar(persistente);
-    }
+        manejador.agregar(persistentePartida);
 
-    @Override
-    public void modificar(DatosPartidaJuegoCasino p) {
-        PartidaJuegoPersistente persistente = getPartidaPersistente(p);
+        ParametrosPersistente persistente = new ParametrosPersistente(new Parametro("ultima_partida", p.getNumeroPartida()));
 
         manejador.conectar(stringConexion);
         manejador.modificar(persistente);
     }
 
-    /**
-     * Metodo fabrica que devuelve el persistente segun la clase de p
-     *
-     * @param p partida para la que se crea el persistente
-     * @return persistente para p
-     */
-    private PartidaJuegoPersistente getPartidaPersistente(DatosPartidaJuegoCasino p) {
-        if (p == null) {
-            return new PartidaJuegoPersistente(p);
-        }
-        if (p.getClass().equals(PartidaPoker.class)) {
-            return new PartidaPokerPersistente(p);
-        }
-        return new PartidaJuegoPersistente(p);
-    }
+    @Override
+    public void modificar(DatosPartidaJuegoCasino p) {
+        PartidaJuegoPersistente persistente = new PartidaJuegoPersistente(p);
 
-    private PartidaJuegoPersistente getPartidaPersistente(CodigosJuego codigoJuego) {
-        if (codigoJuego == CodigosJuego.POKER) {
-            return new PartidaPokerPersistente(new DatosPartidaJuegoCasino(0));
-        }
-        return new PartidaJuegoPersistente(new DatosPartidaJuegoCasino());
+        manejador.conectar(stringConexion);
+        manejador.modificar(persistente);
     }
 
 }

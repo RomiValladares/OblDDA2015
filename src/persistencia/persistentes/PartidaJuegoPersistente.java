@@ -114,15 +114,15 @@ public class PartidaJuegoPersistente implements Persistente {
         u.setDuracion(rs.getLong("duracion"));
         u.setTotalApostado(rs.getDouble("total_apostado"));
         try {
-            u.setComienzo((Date) formato.parse(rs.getString("comienzo")));
-            u.setFinal((Date) formato.parse(rs.getString("final")));
-
             Jugador j = new Jugador();
             j.setNombre(rs.getString("nombre"));
             u.agregarJugador(j, rs.getDouble("ganancias"));
             if (rs.getBoolean("ganador")) {
                 u.setGanador(j);
             }
+
+            u.setComienzo((Date) formato.parse(rs.getString("comienzo")));
+            u.setFinal((Date) formato.parse(rs.getString("final")));
         } catch (Exception ex) {
             Logger.getLogger(PartidaJuegoPersistente.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -144,7 +144,7 @@ public class PartidaJuegoPersistente implements Persistente {
 
     @Override
     public Persistente crearNuevo() {
-        return new PartidaJuegoPersistente(new DatosPartidaJuegoCasino(0));
+        return new PartidaJuegoPersistente(new DatosPartidaJuegoCasino(0, null));
     }
 
 }

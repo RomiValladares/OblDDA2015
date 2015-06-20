@@ -14,15 +14,13 @@ import logica.FabricadorJuegosCasino.CodigosJuego;
  */
 public interface ServiciosJuego {
 
-    public ArrayList<JuegoCasino> getJuegos();
+    public ArrayList<JuegoCasinoV1> getJuegos();
 
     public double getGanancias();
 
     public void setGanancias(double ganancias);
 
     public ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(CodigosJuego codigoJuego);
-
-    public void guardarPartida(PartidaJuegoCasino partida);
 
     public void guardar(DatosPartidaJuegoCasino p);
 

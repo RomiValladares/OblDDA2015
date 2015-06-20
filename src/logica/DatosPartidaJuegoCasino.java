@@ -9,6 +9,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import logica.FabricadorJuegosCasino.CodigosJuego;
 
 /**
  *
@@ -29,11 +30,15 @@ public class DatosPartidaJuegoCasino implements Serializable {
     private boolean comenzada = false;
     private boolean finalizada;
 
-    public DatosPartidaJuegoCasino() {
+    private CodigosJuego codigoJuego;
+
+    public DatosPartidaJuegoCasino(CodigosJuego codigoJuego) {
+        this.codigoJuego = codigoJuego;
     }
 
-    public DatosPartidaJuegoCasino(int nPartida) {
+    public DatosPartidaJuegoCasino(int nPartida, CodigosJuego codigoJuego) {
         numeroPartida = nPartida;
+        this.codigoJuego = codigoJuego;
     }
 
     public int getNumeroPartida() {

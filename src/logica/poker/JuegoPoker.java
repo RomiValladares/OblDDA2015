@@ -1,30 +1,27 @@
 package logica.poker;
 
-import java.util.ArrayList;
-import java.util.Observable;
-import java.util.Observer;
+import java.rmi.RemoteException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import logica.FabricadorJuegosCasino.CodigosJuego;
-import logica.JuegoCasino;
+import logica.JuegoCasinoV1;
 import logica.Jugador;
-import logica.PartidaJuegoCasino;
+import logica.PartidaJuegoCasinoV1;
 import logica.poker.ManoPoker.EventoManoPoker;
+import observableremoto.ObservableRemoto;
+import observableremoto.ObservadorRemoto;
 
 /**
+ * ObservadorRemoto porque observa a la partida, que es ObservableRemoto
  *
- * @author Romi Observable porque lo observa la interfaz para actualizarse
- * cuando por ejemplo entra un jugador a la partida Observer porque observa a la
- * partida
+ * @author Romi
  */
-public class JuegoPoker extends JuegoCasino implements Observer {
+public class JuegoPoker extends JuegoCasinoV1 implements ObservadorRemoto {
 
     private static final CodigosJuego codigo = CodigosJuego.POKER;
     private final String etiqueta = "POKER";
-    // todas las partidas activas (siendo jugadas) en el momento
-    private ArrayList<PartidaPoker> partidas = new ArrayList<>();
-    // partida que esta esperando a ser comenzada
-    private PartidaPoker proximaPartida;
 
-    public JuegoPoker() {
+    public JuegoPoker() throws RemoteException {
         crearPartida();
     }
 
@@ -35,57 +32,48 @@ public class JuegoPoker extends JuegoCasino implements Observer {
      */
     @Override
     public String getEtiqueta() {
-        return etiqueta + ", partida: " + proximaPartida.getNumeroPartida()
-                + ", " + proximaPartida.getJugadoresPartida().size() + "/"
-                + proximaPartida.getCantidadMaxJugadores() + " jugadores";
+        return etiqueta + ", partida: " + getProximaPartida().getNumeroPartida()
+                + ", " + getProximaPartida().getJugadoresPartida().size() + "/"
+                + getProximaPartida().getCantidadMaxJugadores() + " jugadores";
     }
 
     @Override
-    public PartidaJuegoCasino jugar(Jugador nuevoJugador) throws Exception {
+    public PartidaJuegoCasinoV1 jugar(Jugador nuevoJugador) throws Exception {
         // TODO Auto-generated method stub
 
-        proximaPartida.agregar(nuevoJugador);
+        getProximaPartida().agregar(nuevoJugador);
 
-        if (proximaPartida == null || proximaPartida.isComenzada()) {
+        if (getProximaPartida() == null || getProximaPartida().isComenzada()) {
             crearPartida();
-            return partidas.get(partidas.size() - 1);
+            return getPartidas().get(getPartidas().size() - 1);
         }
 
-        return proximaPartida;
+        return getProximaPartida();
     }
 
-    @Override
-    public void update(Observable observable, Object args) {
-        if (args instanceof EventosJuegoCasino) {
-            EventosJuegoCasino evento = (EventosJuegoCasino) args;
-            if (evento == EventosJuegoCasino.NUEVA_GANANCIA) {
-                actualizarGanancias();
-                notificar(evento);
-            }
-        } else if (args instanceof ManoPoker.EventoManoPoker) {
-            EventoManoPoker evento = (EventoManoPoker) args;
-            if (evento.getEvento() != null && (evento.getEvento().equals(ManoPoker.EventosManoPoker.COMENZO_MANO) && partidas.contains(proximaPartida))) {
-                crearPartida();
-            }
-        } else {
-            notificar(null);
-        }
-    }
-
+//    @Override
+//    public void update(Observable observable, Object args) {
+//        if (args instanceof EventosJuegoCasino) {
+//            EventosJuegoCasino evento = (EventosJuegoCasino) args;
+//            if (evento == EventosJuegoCasino.NUEVA_GANANCIA) {
+//                actualizarGanancias();
+//                notificar(evento);
+//            }
+//        } else if (args instanceof ManoPoker.EventoManoPoker) {
+//            EventoManoPoker evento = (EventoManoPoker) args;
+//            if (evento.getEvento() != null && (evento.getEvento().equals(ManoPoker.EventosManoPoker.COMENZO_MANO) && getPartidas().contains(getProximaPartida()))) {
+//                crearPartida();
+//            }
+//        } else {
+//            notificar(null);
+//        }
+//    }
     private void actualizarGanancias() {
         double ganancias = 0;
-        for (PartidaPoker partida : partidas) {
+        for (PartidaPokerV1 partida : getPartidas()) {
             ganancias += partida.getGanancias();
         }
         setGanancias(ganancias);
-    }
-
-    private void crearPartida() {
-        if (proximaPartida != null) {
-            partidas.add(proximaPartida);
-        }
-        proximaPartida = new PartidaPoker(partidas.size());
-        proximaPartida.addObserver(this);
     }
 
     @Override
@@ -96,17 +84,17 @@ public class JuegoPoker extends JuegoCasino implements Observer {
 
     @Override
     public boolean puedeJugar(Jugador nuevoJugador) throws Exception {
-        return proximaPartida.puedeJugar(nuevoJugador);
+        return getProximaPartida().puedeJugar(nuevoJugador);
     }
 
-    private void notificar(Object evento) {
+    public void notificar(Object evento) {
         setChanged();
         notifyObservers(evento);
     }
 
     @Override
     public boolean tienePartidasActivas() {
-        for (PartidaPoker partida : partidas) {
+        for (PartidaPokerV1 partida : getPartidas()) {
             if (partida.isComenzada()) {
                 return true;
             }
@@ -117,6 +105,39 @@ public class JuegoPoker extends JuegoCasino implements Observer {
     @Override
     public String getNombre() {
         return "Poker";
+    }
+
+    @Override
+    protected void crearPartida() {
+        try {
+            if (getProximaPartida() != null) {
+                getPartidas().add(getProximaPartida());
+            }
+            int ultimoNPartida = getUltimoNumeroPartida();
+            setProximaPartida(new PartidaPokerV1(++ultimoNPartida));
+            setUltimoNumeroPartida(ultimoNPartida);
+            getProximaPartida().agregar(this);
+        } catch (RemoteException ex) {
+            Logger.getLogger(JuegoPoker.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+
+    @Override
+    public void actualizar(ObservableRemoto origen, Object args) throws RemoteException {
+        if (args instanceof EventosJuegoCasino) {
+            EventosJuegoCasino evento = (EventosJuegoCasino) args;
+            if (evento == EventosJuegoCasino.NUEVA_GANANCIA) {
+                actualizarGanancias();
+                notificar(evento);
+            }
+        } else if (args instanceof ManoPoker.EventoManoPoker) {
+            EventoManoPoker evento = (EventoManoPoker) args;
+            if (evento.getEvento() != null && (evento.getEvento().equals(ManoPoker.EventosManoPoker.COMENZO_MANO) && getPartidas().contains(getProximaPartida()))) {
+                crearPartida();
+            }
+        } else {
+            notificar(null);
+        }
     }
 
 }

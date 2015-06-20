@@ -1,9 +1,10 @@
 package logica;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Observable;
 import java.util.Observer;
-import logica.JuegoCasino.EventosJuegoCasino;
+import logica.JuegoCasinoV1.EventosJuegoCasino;
 
 //Observer porque observa los juegos para saber cuando se produce una nueva ganancia
 //Observable porque la fachada lo observa
@@ -12,15 +13,15 @@ public class SsJuegos extends Observable implements Observer {
     private final ServiciosJuego servicios;
 
     private static SsJuegos instancia;
-    private ArrayList<JuegoCasino> juegos;
+    private ArrayList<JuegoCasinoV1> juegos;
     private double ganancias;
 
     private SsJuegos() {
 //        juegos = FabricadorJuegosCasino.getJuegosCasino();
         servicios = new ServiciosJuegoV1();
         juegos = servicios.getJuegos();
-        for (JuegoCasino juego : juegos) {
-            juego.addObserver(this);
+        for (JuegoCasinoV1 juego : juegos) {
+            juego.registrar(this);
         }
     }
 
@@ -31,7 +32,7 @@ public class SsJuegos extends Observable implements Observer {
         return instancia;
     }
 
-    public ArrayList<JuegoCasino> getJuegos() {
+    public ArrayList<JuegoCasinoV1> getJuegos() {
         return juegos;
     }
 
@@ -51,15 +52,15 @@ public class SsJuegos extends Observable implements Observer {
 
     private void actualizarGanancias() {
         ganancias = 0;
-        for (JuegoCasino juego : juegos) {
+        for (JuegoCasinoV1 juego : juegos) {
             ganancias += juego.getGanancias();
         }
 
         servicios.setGanancias(ganancias);
     }
 
-    boolean hayJuegoActivos() {
-        for (JuegoCasino juego : juegos) {
+    boolean hayJuegoActivos() throws RemoteException {
+        for (JuegoCasinoV1 juego : juegos) {
             if (juego.tienePartidasActivas()) {
                 return true;
             }
@@ -72,12 +73,13 @@ public class SsJuegos extends Observable implements Observer {
      * @param codigoJuego juego por el cual se van a filtrar las partidas, o -1
      * si se quieren obtener todas
      */
-    ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(JuegoCasino codigoJuego) {
+    ArrayList<DatosPartidaJuegoCasino> getDatosPartidas(JuegoCasinoV1 codigoJuego) throws RemoteException {
         return servicios.getDatosPartidas(codigoJuego.getCodigo());
     }
 
     protected void guardar(DatosPartidaJuegoCasino p) {
         servicios.guardar(p);
+        //TODO avisar que cambio el numero partida
     }
 
     protected void modificar(DatosPartidaJuegoCasino p) {

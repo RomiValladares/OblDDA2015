@@ -70,7 +70,7 @@ public class ParametrosPersistente implements Persistencia.Persistente {
     @Override
     public void leer(ResultSet rs) throws SQLException {
         param.setNombre(rs.getString("nombre"));
-        param.setValor(rs.getString("valor"));
+        param.setValor(rs.getInt("valor"));
     }
 
     @Override
